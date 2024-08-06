@@ -50,9 +50,68 @@ void drawLineBresenham(float x1, float y1, float x2, float y2){
     glEnd();
 }
 
+void midPoint(int X1, int Y1, int X2, int Y2) 
+{ 
+    int dx = std::abs(X2 - X1),
+        dy = std::abs(Y2 - Y1); 
+
+    int x, y;
+
+    int stepx = (X1 < X2) ? 1 : -1,
+        stepy = (Y1 < Y2) ? 1 : -1;
+
+    if (dx > dy) { // Slope < 1
+        int d = 2 * (dy - dx);
+        x = X1;
+        y = Y1;
+
+        glBegin(GL_POINTS);
+        glColor3f(0.0, 1.0, 0.0); 
+        glVertex2i(x, y);
+
+        while (x != X2) {
+            x += stepx;
+            //to the right
+            if (d < 0) {
+                d +=  dy;
+            }
+            //to the top right 
+            else {
+                y += stepy;
+                d += (dy - dx);
+            }
+            glVertex2i(x, y);
+        }
+    } else { // Slope > 1
+        int d = 2 * (dx - dy);
+        x = X1;
+        y = Y1;
+     
+        glBegin(GL_POINTS);
+        glColor3f(0.0, 1.0, 0.0); 
+        glVertex2i(x, y);
+
+        while (y != Y2) {
+            y += stepy;
+            //to the right
+            if (d < 0) {
+                d += dx;
+            }
+            //to the top right 
+            else {
+                x += stepx;
+                d += (dx - dy);
+            }
+            glVertex2i(x, y);
+        }
+    }
+    glEnd();
+}
+
 void display() {
-    drawLineDDA(0.0, 10.0, 300.0, 200.0);
+    drawLineDDA(300.0, 200.0, 0.0, 10.0);
     drawLineBresenham(300.0, 100.0, 400.0, 200.0);
+    midPoint(200.0, 0.0, 300.0, 300.0);
     glFlush();
 }
 
@@ -60,8 +119,8 @@ void init() {
     glClearColor(0.7, 0.7, 0.7, 1.0);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    //gives the typical OpenGL coordinate system
-    //with origin at top left
+    
+    //origin at top left
     gluOrtho2D(0, 500.0, 500.0, 0); //left right bottom top
 }
 
